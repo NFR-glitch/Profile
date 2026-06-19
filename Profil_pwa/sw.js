@@ -1,11 +1,11 @@
 const CACHE_NAME = "profile-pwa-v1";
 const ASSETS_TO_CACHE = [
-  "./",
-  "./index.html",
+  "../",
+  "../index.html",
   "./style.css",
-  "./sricpt.js",
+  "./script.js",
   "./manifest.json",
-  "./WhatsApp Image 2026-03-24 at 07.52.14.jpeg",
+  "./WhatsApp%20Image%202026-03-24%20at%2007.52.14.jpeg",
   "./icon-192.png",
   "./icon-512.png",
   "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css",

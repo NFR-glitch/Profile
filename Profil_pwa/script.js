@@ -73,7 +73,7 @@ function loadMap() {
 if ("serviceWorker" in navigator) {
   window.addEventListener("load", async () => {
     try {
-      const registration = await navigator.serviceWorker.register("./profile_pwa/sw.js");
+      const registration = await navigator.serviceWorker.register("Profil_pwa/sw.js");
       console.log("Service Worker Registered:", registration);
     } catch (error) {
       console.error("Service Worker gagal:", error);
@@ -113,7 +113,7 @@ async function showNotification() {
   if (permission === "granted") {
     new Notification("Website Profile", {
       body: "Selamat datang di website profile Naqris Fatkhur Rozak",
-      icon: "./icon-192.png"
+      icon: "Profil_pwa/icon-192.png"
     });
   }
 }
