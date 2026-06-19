@@ -1,4 +1,4 @@
-const CACHE_NAME = "profile_pwa-v1";
+const CACHE_NAME = "profile-pwa-v1";
 const ASSETS_TO_CACHE = [
   "./",
   "./index.html",
