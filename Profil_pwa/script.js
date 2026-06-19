@@ -1,47 +1,46 @@
-// Base URL API (untuk deploy tidak hardcode localhost)
-// Default: same-origin (frontend & backend bisa host di domain yang sama via proxy)
-// Contoh production (kalau backend beda domain): set window.ARTICLE_API di HTML atau gunakan ENV saat build.
-// Ambil dari backend (sesuai Backend di Profile_projek: port 3000)
-// Jika deploy, ganti ke URL backend yang sesuai.
-const ARTICLE_API = window.ARTICLE_API || "http://localhost:3000/articles";
-
-
+// =====================
+// ELEMENT TARGET
+// =====================
 const articleContainer = document.getElementById("article-container");
 
 // =====================
-// LOAD ARTICLES
+// LOAD ARTICLES (STATIC)
 // =====================
-async function getArticles() {
-  try {
-    const response = await fetch(ARTICLE_API);
-    const articles = await response.json();
+function getArticles() {
+  const articles = [
+    {
+      title: "Pentingnya Menjaga Keseimbangan Hidup di Era Digital",
+      writer: "Naqris",
+      content:
+        "Di tengah gempuran notifikasi dan tuntutan untuk selalu terhubung, menjaga keseimbangan hidup menjadi tantangan tersendiri. Menentukan batas waktu penggunaan teknologi membantu menjaga produktivitas dan kesehatan mental."
+    },
+    {
+      title: "Implementasi Progressive Web App",
+      writer: "Naqris",
+      content:
+        "Progressive Web App memungkinkan website berjalan seperti aplikasi mobile. Pengguna dapat menginstall aplikasi langsung dari browser tanpa melalui app store."
+    }
+  ];
 
-    articleContainer.innerHTML = "";
+  articleContainer.innerHTML = "";
 
-    articles.forEach((article) => {
-      articleContainer.innerHTML += `
-        <div class="card">
-          <h2>${article.title}</h2>
-
-          <small>
-            Ditulis oleh ${article.writer}
-          </small>
-
-          <p>${article.content}</p>
-        </div>
-      `;
-    });
-  } catch (error) {
-    console.error("Error mengambil artikel:", error);
-  }
+  articles.forEach((article) => {
+    articleContainer.innerHTML += `
+      <div class="card">
+        <h2>${article.title}</h2>
+        <small>Ditulis oleh ${article.writer}</small>
+        <p>${article.content}</p>
+      </div>
+    `;
+  });
 }
 
 // =====================
-// LOAD PROFILE + MAP
+// LOAD MAP (OPTIONAL)
 // =====================
 function loadMap() {
   if (!navigator.geolocation) {
-    alert("Browser tidak mendukung Geolocation");
+    console.log("Geolocation tidak didukung browser");
     return;
   }
 
@@ -52,75 +51,85 @@ function loadMap() {
 
       const map = L.map("map").setView([lat, lng], 15);
 
-      L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
-        attribution: "&copy; OpenStreetMap",
-      }).addTo(map);
+      L.tileLayer(
+        "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
+        {
+          attribution: "&copy; OpenStreetMap"
+        }
+      ).addTo(map);
 
-      L.marker([lat, lng]).addTo(map).bindPopup("Lokasi Saya Saat Ini").openPopup();
+      L.marker([lat, lng])
+        .addTo(map)
+        .bindPopup("Lokasi Saya Saat Ini")
+        .openPopup();
 
       console.log("Latitude:", lat);
       console.log("Longitude:", lng);
     },
     (error) => {
-      console.error(error);
-      alert("Gagal mendapatkan lokasi");
-    },
+      console.log("Lokasi gagal diakses:", error);
+    }
   );
 }
+
 // =====================
-// SERVICE WORKER
+// REGISTER SERVICE WORKER
 // =====================
 if ("serviceWorker" in navigator) {
   window.addEventListener("load", async () => {
     try {
       const registration = await navigator.serviceWorker.register("Profil_pwa/sw.js");
-      console.log("Service Worker Registered:", registration);
+      console.log("Service Worker aktif:", registration);
     } catch (error) {
-      console.error("Service Worker gagal:", error);
+      console.log("Service Worker gagal:", error);
     }
   });
 }
 
 // =====================
-// NOTIFICATION & PUSH TEST
+// PUSH NOTIFICATION TEST
 // =====================
 async function testPushNotification() {
   if (!("Notification" in window)) {
-    alert("Browser Anda tidak mendukung Push Notification.");
+    alert("Browser tidak mendukung notifikasi");
     return;
   }
 
   const permission = await Notification.requestPermission();
+
   if (permission !== "granted") {
-    alert("Izin notifikasi ditolak. Silakan aktifkan izin notifikasi di browser Anda.");
+    alert("Izin notifikasi ditolak");
     return;
   }
 
   const registration = await navigator.serviceWorker.ready;
+
   if (registration && registration.active) {
     registration.active.postMessage("Web Push Notification Berhasil");
-  } else {
-    alert("Service Worker belum aktif. Silakan reload halaman.");
   }
 }
 
+// =====================
+// SHOW NOTIFICATION
+// =====================
 async function showNotification() {
   if (!("Notification" in window)) {
     return;
   }
 
   const permission = await Notification.requestPermission();
+
   if (permission === "granted") {
     new Notification("Website Profile", {
-      body: "Selamat datang di website profile Naqris Fatkhur Rozak",
+      body: "Selamat datang di website profile Naqris",
       icon: "Profil_pwa/icon-192.png"
     });
   }
 }
 
 // =====================
-// RUN
+// RUN WEBSITE
 // =====================
 getArticles();
-loadMap();
-showNotification();
+// loadMap();
+// showNotification();
