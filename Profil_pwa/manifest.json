@@ -1,0 +1,24 @@
+{
+  "name": "Profile Pribadi - Naqris Fatkhur Rozak",
+  "short_name": "Naqris Profile",
+  "description": "Website Profile Pribadi Naqris Fatkhur Rozak dengan fitur PWA",
+  "start_url": "../index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "theme_color": "#4b6b8f",
+  "background_color": "#dbeafe",
+  "icons": [
+    {
+      "src": "./icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "./icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable any"
+    }
+  ]
+}

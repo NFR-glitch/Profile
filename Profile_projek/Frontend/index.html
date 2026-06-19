@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CMS Sederhana</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <div class="container">
+        <h1>Content Management System</h1>
+
+        <!-- Form Input -->
+        <form id="articleForm">
+            <input type="text" id="judul" placeholder="Judul Artikel">
+            <textarea id="content" placeholder="Isi Artikel"></textarea>
+            <input type="text" id="writer" placeholder="Penulis" >
+
+            <button type="submit">Tambah Artikel</button>
+            <button type="reset">Reset</button>
+            <p id="error"></p>
+        </form>
+
+        <div id="list"></div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
