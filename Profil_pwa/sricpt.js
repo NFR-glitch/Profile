@@ -73,7 +73,7 @@ function loadMap() {
 if ("serviceWorker" in navigator) {
   window.addEventListener("load", async () => {
     try {
-      const registration = await navigator.serviceWorker.register("./sw.js");
+      const registration = await navigator.serviceWorker.register("./profile_pwa/sw.js");
       console.log("Service Worker Registered:", registration);
     } catch (error) {
       console.error("Service Worker gagal:", error);
