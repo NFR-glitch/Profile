@@ -1,0 +1,9 @@
+# Jekyll configuration
+# Fix for GitHub Pages build failing when Jekyll tries to parse Markdown inside node_modules.
+
+exclude:
+  - "node_modules"
+  - "Profile_projek/Backend/node_modules"
+
+# Keep defaults for GitHub Pages
+

@@ -4,35 +4,55 @@
 const articleContainer = document.getElementById("article-container");
 
 // =====================
-// LOAD ARTICLES (STATIC)
+// LOAD PROFILE (FETCH)
 // =====================
-function getArticles() {
-  const articles = [
-    {
-      title: "Pentingnya Menjaga Keseimbangan Hidup di Era Digital",
-      writer: "Naqris",
-      content:
-        "Di tengah gempuran notifikasi dan tuntutan untuk selalu terhubung, menjaga keseimbangan hidup menjadi tantangan tersendiri. Menentukan batas waktu penggunaan teknologi membantu menjaga produktivitas dan kesehatan mental."
-    },
-    {
-      title: "Implementasi Progressive Web App",
-      writer: "Naqris",
-      content:
-        "Progressive Web App memungkinkan website berjalan seperti aplikasi mobile. Pengguna dapat menginstall aplikasi langsung dari browser tanpa melalui app store."
+async function getProfile() {
+  try {
+    const res = await fetch("http://localhost:3000/articles");
+    if (!res.ok) throw new Error("Gagal mengambil data profile");
+    const profile = await res.json();
+
+    if (profile) {
+      document.getElementById("nama").textContent = profile.nama || "Naqris Fatkhur Rozak";
+      document.getElementById("nim").textContent = "NIM: " + (profile.nim || "-");
+      document.getElementById("prodi").textContent = "Prodi: " + (profile.prodi || "-");
+      document.getElementById("email").textContent = "Email: " + (profile.email || "-");
+      document.getElementById("deskripsi").textContent = profile.deskripsi || "Mahasiswa Informatika";
     }
-  ];
+  } catch (error) {
+    console.log("Error fetching profile:", error);
+  }
+}
 
-  articleContainer.innerHTML = "";
+// =====================
+// LOAD ARTICLES (FETCH)
+// =====================
+async function getArticles() {
+  try {
+    const res = await fetch("http://localhost:3000/articles");
+    if (!res.ok) throw new Error("Gagal mengambil data artikel");
+    const articles = await res.json();
 
-  articles.forEach((article) => {
-    articleContainer.innerHTML += `
-      <div class="card">
-        <h2>${article.title}</h2>
-        <small>Ditulis oleh ${article.writer}</small>
-        <p>${article.content}</p>
-      </div>
-    `;
-  });
+    articleContainer.innerHTML = "";
+
+    if (articles.length === 0) {
+      articleContainer.innerHTML = "<p>Belum ada artikel.</p>";
+      return;
+    }
+
+    articles.forEach((article) => {
+      articleContainer.innerHTML += `
+        <div class="card">
+          <h2>${article.title}</h2>
+          <small>Ditulis oleh ${article.writer}</small>
+          <p>${article.content}</p>
+        </div>
+      `;
+    });
+  } catch (error) {
+    console.log("Error fetching articles:", error);
+    articleContainer.innerHTML = "<p>Gagal memuat artikel. Pastikan server backend berjalan.</p>";
+  }
 }
 
 // =====================
@@ -78,7 +98,7 @@ function loadMap() {
 if ("serviceWorker" in navigator) {
   window.addEventListener("load", async () => {
     try {
-      const registration = await navigator.serviceWorker.register("Profil_pwa/sw.js");
+      const registration = await navigator.serviceWorker.register("sw.js");
       console.log("Service Worker aktif:", registration);
     } catch (error) {
       console.log("Service Worker gagal:", error);
@@ -122,7 +142,7 @@ async function showNotification() {
   if (permission === "granted") {
     new Notification("Website Profile", {
       body: "Selamat datang di website profile Naqris",
-      icon: "Profil_pwa/icon-192.png"
+      icon: "./icon-192.png"
     });
   }
 }
@@ -130,6 +150,7 @@ async function showNotification() {
 // =====================
 // RUN WEBSITE
 // =====================
+getProfile();
 getArticles();
-// loadMap();
-// showNotification();
+loadMap();
+//showNotification();
