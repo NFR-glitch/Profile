@@ -7,27 +7,41 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-/* ======================
-   GET ALL ARTICLES
-====================== */
-app.get("/articles", (req, res) => {
-  db.query("SELECT * FROM cms_profile ORDER BY id DESC", (err, result) => {
-    if (err) {
-      console.log(err);
-      return res.status(500).json(err);
-    }
-    res.json(result);
+/* TEST */
+app.get("/", (req, res) => {
+  res.json({
+    status: "API running"
   });
 });
 
-/* ======================
-   CREATE ARTICLE
-====================== */
+/* GET PROFILE */
+app.get("/profile", (req, res) => {
+  res.json({
+    nama: "Naqris Fatkhur Rozak",
+    nim: "Terkait Informatika", 
+    prodi: "Informatika",
+    email: "naqris@example.com", 
+    deskripsi: "Mahasiswa Informatika semester 4 di Universitas Nahdlatul Ulama Al-Ghozali Cilacap. Berfokus pada pengembangan sistem dan web programming."
+  });
+});
+
+/* GET ALL ARTICLES */
+app.get("/articles", (req, res) => {
+  db.query(
+    "SELECT * FROM cms_profile ORDER BY id DESC",
+    (err, result) => {
+      if (err) return res.status(500).json(err);
+      res.json(result);
+    }
+  );
+});
+
+/* CREATE */
 app.post("/articles", (req, res) => {
   const { title, content, writer } = req.body;
 
   db.query(
-    "INSERT INTO cms_profile(title, content, writer) VALUES (?, ?, ?)",
+    "INSERT INTO cms_profile (title, content, writer) VALUES (?, ?, ?)",
     [title, content, writer],
     (err, result) => {
       if (err) return res.status(500).json(err);
@@ -42,9 +56,7 @@ app.post("/articles", (req, res) => {
   );
 });
 
-/* ======================
-   UPDATE ARTICLE
-====================== */
+/* UPDATE */
 app.put("/articles/:id", (req, res) => {
   const { id } = req.params;
   const { title, content, writer } = req.body;
@@ -56,18 +68,13 @@ app.put("/articles/:id", (req, res) => {
       if (err) return res.status(500).json(err);
 
       res.json({
-        id,
-        title,
-        content,
-        writer
+        message: "Updated successfully"
       });
     }
   );
 });
 
-/* ======================
-   DELETE ARTICLE
-====================== */
+/* DELETE */
 app.delete("/articles/:id", (req, res) => {
   const { id } = req.params;
 
@@ -78,7 +85,7 @@ app.delete("/articles/:id", (req, res) => {
       if (err) return res.status(500).json(err);
 
       res.json({
-        message: "Deleted"
+        message: "Deleted successfully"
       });
     }
   );
@@ -87,5 +94,5 @@ app.delete("/articles/:id", (req, res) => {
 const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, () => {
-  console.log("Server running on port", PORT);
+  console.log(`Server running on port ${PORT}`);
 });

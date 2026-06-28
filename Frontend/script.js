@@ -8,7 +8,7 @@ const API = "https://profile-production-2b3c.up.railway.app";
 // =====================
 async function getProfile() {
   try {
-    const res = await fetch(`${API}/cms_profile`);
+    const res = await fetch(`${API}/profile`);
 
     if (!res.ok) {
       throw new Error("Gagal mengambil data profile");
@@ -52,6 +52,33 @@ function loadMap() {
       .bindPopup("Lokasi Saya Saat Ini")
       .openPopup();
   });
+}
+
+// =====================
+// PUSH NOTIFICATION
+// =====================
+async function testPushNotification() {
+  if (!("Notification" in window)) {
+    alert("Browser ini tidak mendukung desktop notification");
+    return;
+  }
+
+  let permission = Notification.permission;
+
+  if (permission !== "granted") {
+    permission = await Notification.requestPermission();
+  }
+
+  if (permission === "granted") {
+    if (navigator.serviceWorker.controller) {
+      navigator.serviceWorker.controller.postMessage("Web Push Notification Berhasil");
+      alert("Push notification berhasil dikirim!");
+    } else {
+      alert("Service Worker belum aktif. Coba refresh halaman.");
+    }
+  } else {
+    alert("Izin notifikasi tidak diberikan.");
+  }
 }
 
 // =====================
