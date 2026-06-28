@@ -1,20 +1,25 @@
 require("dotenv").config();
 const mysql = require("mysql2");
 
-const db = mysql.createConnection({
-    host: process.env.MYSQL_HOST,
-    port: process.env.MYSQL_PORT,
-    user: process.env.MYSQL_USER,
-    password: process.env.MYSQL_PASSWORD,
-    database: process.env.MYSQL_DATABASE,
+const db = mysql.createPool({
+  host: process.env.MYSQLHOST,
+  port: process.env.MYSQLPORT,
+  user: process.env.MYSQLUSER,
+  password: process.env.MYSQLPASSWORD,
+  database: process.env.MYSQLDATABASE,
+  waitForConnections: true,
+  connectionLimit: 10
 });
 
-db.connect((err) => {
-    if (err) {
-        console.error("Database gagal terhubung:", err);
-        return;
-    }
-    console.log("Database Railway berhasil terhubung!");
+db.getConnection((err, connection) => {
+  if (err) {
+    console.error("DB ERROR:", err.code);
+    console.error(err.message);
+    return;
+  }
+
+  console.log("Connected to Railway Internal MySQL");
+  connection.release();
 });
 
 module.exports = db;
