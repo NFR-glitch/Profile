@@ -7,89 +7,85 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// PROFILE
-app.get("/profile", (req, res) => {
-  db.query("SELECT * FROM profile LIMIT 1", (err, result) => {
+/* ======================
+   GET ALL ARTICLES
+====================== */
+app.get("/articles", (req, res) => {
+  db.query("SELECT * FROM cms_profile ORDER BY id DESC", (err, result) => {
     if (err) {
       console.log(err);
-      res.status(500).json(err);
-    } else {
-      console.log(result);
-      res.json(result[0]);
+      return res.status(500).json(err);
     }
+    res.json(result);
   });
 });
 
-// READ
-app.get("/articles", (req, res) => {
-  db.query("SELECT * FROM cms_profile", (err, result) => {
-    if (err) {
-      res.status(500).json(err);
-    } else {
-      res.json(result);
-    }
-  });
-});
-
-// CREATE
+/* ======================
+   CREATE ARTICLE
+====================== */
 app.post("/articles", (req, res) => {
   const { title, content, writer } = req.body;
 
-  db.query("INSERT INTO cms_profile(title, content, writer) VALUES (?, ?, ?)", [title, content, writer], (err, result) => {
-    if (err) {
-      res.status(500).json(err);
-    } else {
+  db.query(
+    "INSERT INTO cms_profile(title, content, writer) VALUES (?, ?, ?)",
+    [title, content, writer],
+    (err, result) => {
+      if (err) return res.status(500).json(err);
+
       res.json({
         id: result.insertId,
-        ...req.body
-      });
-    }
-  });
-});
-
-// UPDATE
-app.put("/articles/:id", (req, res) => {
-  const id = req.params.id;
-  const { title, content, writer } = req.body;
-
-  db.query(
-    "UPDATE cms_profile SET title=?, content=?, writer=? WHERE id=?",
-    [title, content, writer, id],
-    (err, result) => {
-      if (err) {
-        return res.status(500).json(err);
-      }
-
-      // Jika id tidak ditemukan, result.affectedRows biasanya = 0
-      if (result.affectedRows === 0) {
-        return res.status(404).json({ message: "Artikel tidak ditemukan" });
-      }
-
-      return res.json({
-        id: parseInt(id),
-        ...req.body
+        title,
+        content,
+        writer
       });
     }
   );
 });
 
-// DELETE
-app.delete("/articles/:id", (req, res) => {
-  const id = req.params.id;
+/* ======================
+   UPDATE ARTICLE
+====================== */
+app.put("/articles/:id", (req, res) => {
+  const { id } = req.params;
+  const { title, content, writer } = req.body;
 
-  db.query("DELETE FROM cms_profile WHERE id=?", [id], (err, result) => {
-    if (err) {
-      res.status(500).json(err);
-    } else {
+  db.query(
+    "UPDATE cms_profile SET title=?, content=?, writer=? WHERE id=?",
+    [title, content, writer, id],
+    (err) => {
+      if (err) return res.status(500).json(err);
+
       res.json({
-        message: "Artikel berhasil dihapus",
+        id,
+        title,
+        content,
+        writer
       });
     }
-  });
+  );
+});
+
+/* ======================
+   DELETE ARTICLE
+====================== */
+app.delete("/articles/:id", (req, res) => {
+  const { id } = req.params;
+
+  db.query(
+    "DELETE FROM cms_profile WHERE id=?",
+    [id],
+    (err) => {
+      if (err) return res.status(500).json(err);
+
+      res.json({
+        message: "Deleted"
+      });
+    }
+  );
 });
 
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-});
 
+app.listen(PORT, () => {
+  console.log("Server running on port", PORT);
+});
